@@ -51,7 +51,7 @@
 
 <div class="container">
 
-    <h2 class="text-center mb-4">Gestion des produits</h2>
+    <h2 class="text-center mb-4">Catalogue de prix</h2>
 
     <!-- ONGLET -->
     <ul class="nav nav-tabs" id="myTab">
@@ -65,10 +65,34 @@
 
     <div class="tab-content">
 
-        <!-- ONGLET 1 : HAUTE CONSOMMATION -->
+        <!-- 🎁 ONGLET 1 : HAUTE CONSOMMATION -->
         <div class="tab-pane fade show active" id="hc">
+            <!-- Boutons Import/Export -->
+            <div class="mt-3">
+                <button class="btn btn-outline-primary" onclick="exportExcel('HC')">📤 Exporter Excel</button>
+                <input type="file" id="importHC" class="d-none" onchange="importExcel(event,'HC')">
+                <button class="btn btn-outline-secondary" onclick="document.getElementById('importHC').click()">📥 Importer Excel</button>
+            </div>
 
-            <!-- Formulaire HC -->
+            <!-- Tableau HC -->
+            <h4 class="mt-4">Liste des produits</h4>
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix (€)</th>
+                        <th>Durée</th>
+                        <th>Catégorie</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyHC"></tbody>
+            </table>
+
+            <!-- Résumé HC -->
+            <div id="resumeHC" class="resume-box"></div>
+			
+			<!-- Formulaire HC -->
             <h4>Ajouter un produit</h4>
             <form class="row g-3" id="formHC">
 
@@ -100,14 +124,19 @@
                 </div>
             </form>
 
+        </div>
+
+        <!-- 🎁 ONGLET 2 : PREMIÈRE NÉCESSITÉ -->
+        <div class="tab-pane fade" id="pn">
+
             <!-- Boutons Import/Export -->
             <div class="mt-3">
-                <button class="btn btn-outline-primary" onclick="exportExcel('HC')">📤 Exporter Excel</button>
-                <input type="file" id="importHC" class="d-none" onchange="importExcel(event,'HC')">
-                <button class="btn btn-outline-secondary" onclick="document.getElementById('importHC').click()">📥 Importer Excel</button>
+                <button class="btn btn-outline-primary" onclick="exportExcel('PN')">📤 Exporter Excel</button>
+                <input type="file" id="importPN" class="d-none" onchange="importExcel(event,'PN')">
+                <button class="btn btn-outline-secondary" onclick="document.getElementById('importPN').click()">📥 Importer Excel</button>
             </div>
 
-            <!-- Tableau HC -->
+            <!-- Tableau PN -->
             <h4 class="mt-4">Liste des produits</h4>
             <table class="table table-striped">
                 <thead class="table-dark">
@@ -119,18 +148,13 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody id="tbodyHC"></tbody>
+                <tbody id="tbodyPN"></tbody>
             </table>
 
-            <!-- Résumé HC -->
-            <div id="resumeHC" class="resume-box"></div>
-
-        </div>
-
-        <!-- ONGLET 2 : PREMIÈRE NÉCESSITÉ -->
-        <div class="tab-pane fade" id="pn">
-
-            <!-- Formulaire PN -->
+            <!-- Résumé PN -->
+            <div id="resumePN" class="resume-box"></div>
+			
+			<!-- Formulaire PN -->
             <h4>Ajouter un produit</h4>
             <form class="row g-3" id="formPN">
 
@@ -161,31 +185,6 @@
                     <button class="btn btn-success">Ajouter</button>
                 </div>
             </form>
-
-            <!-- Boutons Import/Export -->
-            <div class="mt-3">
-                <button class="btn btn-outline-primary" onclick="exportExcel('PN')">📤 Exporter Excel</button>
-                <input type="file" id="importPN" class="d-none" onchange="importExcel(event,'PN')">
-                <button class="btn btn-outline-secondary" onclick="document.getElementById('importPN').click()">📥 Importer Excel</button>
-            </div>
-
-            <!-- Tableau PN -->
-            <h4 class="mt-4">Liste des produits</h4>
-            <table class="table table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Produit</th>
-                        <th>Prix (€)</th>
-                        <th>Durée</th>
-                        <th>Catégorie</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyPN"></tbody>
-            </table>
-
-            <!-- Résumé PN -->
-            <div id="resumePN" class="resume-box"></div>
 
         </div>
 
