@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gestion des produits</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- SheetJS pour Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+    body { padding: 40px; }
+
+    /* Onglets modernes centrés */
+    .nav-tabs {
+        justify-content: center;
+        border-bottom: none;
+        margin-bottom: 20px;
+    }
+    .nav-tabs .nav-link {
+        border-radius: 20px;
+        padding: 10px 25px;
+        margin: 0 10px;
+        background: #e9ecef;
+        border: none;
+        font-weight: 600;
+    }
+    .nav-tabs .nav-link.active {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .edit-input {
+        width: 80px;
+    }
+
+    /* Style du résumé */
+    .resume-box {
+        background: #f8f9fa;
+        border-left: 4px solid #0d6efd;
+        padding: 10px 15px;
+        margin-top: 10px;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2 class="text-center mb-4">Gestion des produits</h2>
+
+    <!-- ONGLET -->
+    <ul class="nav nav-tabs" id="myTab">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hc">Produits à haute consommation</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pn">Produits de première nécessité</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- ONGLET 1 : HAUTE CONSOMMATION -->
+        <div class="tab-pane fade show active" id="hc">
+
+            <!-- Formulaire HC -->
+            <h4>Ajouter un produit</h4>
+            <form class="row g-3" id="formHC">
+
+                <div class="col-md-4">
+                    <input type="text" id="produitHC" class="form-control" placeholder="Nom du produit" required>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="number" id="prixHC" class="form-control" placeholder="Prix (€)" required>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" id="dureeHC" class="form-control" placeholder="Durée" required>
+                </div>
+
+                <div class="col-md-2">
+                    <select id="categorieHC" class="form-select" required>
+                        <option value="">Catégorie</option>
+                        <option>Alimentation</option>
+                        <option>Hygiène</option>
+                        <option>Maison</option>
+                        <option>Transport</option>
+                        <option>Autre</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+
+            <!-- Boutons Import/Export -->
+            <div class="mt-3">
+                <button class="btn btn-outline-primary" onclick="exportExcel('HC')">📤 Exporter Excel</button>
+                <input type="file" id="importHC" class="d-none" onchange="importExcel(event,'HC')">
+                <button class="btn btn-outline-secondary" onclick="document.getElementById('importHC').click()">📥 Importer Excel</button>
+            </div>
+
+            <!-- Tableau HC -->
+            <h4 class="mt-4">Liste des produits</h4>
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix (€)</th>
+                        <th>Durée</th>
+                        <th>Catégorie</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyHC"></tbody>
+            </table>
+
+            <!-- Résumé HC -->
+            <div id="resumeHC" class="resume-box"></div>
+
+        </div>
+
+        <!-- ONGLET 2 : PREMIÈRE NÉCESSITÉ -->
+        <div class="tab-pane fade" id="pn">
+
+            <!-- Formulaire PN -->
+            <h4>Ajouter un produit</h4>
+            <form class="row g-3" id="formPN">
+
+                <div class="col-md-4">
+                    <input type="text" id="produitPN" class="form-control" placeholder="Nom du produit" required>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="number" id="prixPN" class="form-control" placeholder="Prix (€)" required>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" id="dureePN" class="form-control" placeholder="Durée" required>
+                </div>
+
+                <div class="col-md-2">
+                    <select id="categoriePN" class="form-select" required>
+                        <option value="">Catégorie</option>
+                        <option>Alimentation</option>
+                        <option>Hygiène</option>
+                        <option>Maison</option>
+                        <option>Transport</option>
+                        <option>Autre</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+
+            <!-- Boutons Import/Export -->
+            <div class="mt-3">
+                <button class="btn btn-outline-primary" onclick="exportExcel('PN')">📤 Exporter Excel</button>
+                <input type="file" id="importPN" class="d-none" onchange="importExcel(event,'PN')">
+                <button class="btn btn-outline-secondary" onclick="document.getElementById('importPN').click()">📥 Importer Excel</button>
+            </div>
+
+            <!-- Tableau PN -->
+            <h4 class="mt-4">Liste des produits</h4>
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix (€)</th>
+                        <th>Durée</th>
+                        <th>Catégorie</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyPN"></tbody>
+            </table>
+
+            <!-- Résumé PN -->
+            <div id="resumePN" class="resume-box"></div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- FIN PARTIE 1 -->
+
+<script>
+// =========================
+// Données en LocalStorage
+// =========================
+
+// HC = Haute Consommation
+// PN = Première Nécessité
+let HC = JSON.parse(localStorage.getItem("produits_HC")) || [];
+let PN = JSON.parse(localStorage.getItem("produits_PN")) || [];
+
+// =========================
+// Fonction d'affichage
+// =========================
+
+function afficher(type) {
+    // type = "HC" ou "PN"
+    let data = (type === "HC") ? HC : PN;
+    let tbody = document.getElementById("tbody" + type);
+    tbody.innerHTML = "";
+
+    data.forEach((p, index) => {
+        let tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${p.nom}</td>
+            <td id="prixCell_${type}_${index}">${formatPrix(p.prix)}</td>
+            <td>${p.duree}</td>
+            <td>${p.categorie}</td>
+            <td id="action_${type}_${index}">
+                <button class="btn btn-sm btn-warning" onclick="editPrix('${type}',${index})">Modifier</button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+
+    // Met à jour le résumé après chaque affichage
+    mettreAJourResume(type);
+}
+
+// Affichage initial
+afficher("HC");
+afficher("PN");
+
+// =========================
+// Ajout d'un produit
+// =========================
+
+function ajouter(type) {
+    // Récupération des champs dynamiquement selon le type
+    let nom = document.getElementById("produit" + type).value;
+    let prix = document.getElementById("prix" + type).value;
+    let duree = document.getElementById("duree" + type).value;
+    let categorie = document.getElementById("categorie" + type).value;
+
+    let obj = { nom, prix, duree, categorie };
+
+    if (type === "HC") {
+        HC.push(obj);
+        localStorage.setItem("produits_HC", JSON.stringify(HC));
+    } else {
+        PN.push(obj);
+        localStorage.setItem("produits_PN", JSON.stringify(PN));
+    }
+
+    afficher(type);
+}
+
+// Gestion des formulaires
+document.getElementById("formHC").onsubmit = e => {
+    e.preventDefault();
+    ajouter("HC");
+    e.target.reset();
+};
+
+document.getElementById("formPN").onsubmit = e => {
+    e.preventDefault();
+    ajouter("PN");
+    e.target.reset();
+};
+
+// =========================
+// Édition du prix
+// =========================
+
+function editPrix(type, index) {
+    let data = (type === "HC") ? HC : PN;
+
+    // Cellule du prix
+    let cell = document.getElementById(`prixCell_${type}_${index}`);
+    // Cellule des actions
+    let action = document.getElementById(`action_${type}_${index}`);
+
+    // Remplace le texte par un input
+    cell.innerHTML = `
+        <input type="number" step="0.01" class="form-control edit-input" 
+               id="edit_${type}_${index}" value="${data[index].prix}">
+    `;
+
+    // Remplace le bouton "Modifier" par "Enregistrer" + "Annuler"
+    action.innerHTML = `
+        <button class="btn btn-sm btn-success" onclick="savePrix('${type}',${index})">Enregistrer</button>
+        <button class="btn btn-sm btn-secondary" onclick="afficher('${type}')">Annuler</button>
+    `;
+}
+
+function savePrix(type, index) {
+    let data = (type === "HC") ? HC : PN;
+
+    // Récupère la nouvelle valeur
+    let newPrix = document.getElementById(`edit_${type}_${index}`).value;
+    data[index].prix = newPrix;
+
+    // Sauvegarde dans le LocalStorage
+    if (type === "HC") {
+        localStorage.setItem("produits_HC", JSON.stringify(HC));
+    } else {
+        localStorage.setItem("produits_PN", JSON.stringify(PN));
+    }
+
+    // Réaffiche le tableau (et le résumé)
+    afficher(type);
+}
+
+// =========================
+// Export Excel
+// =========================
+
+function exportExcel(type) {
+    let data = (type === "HC") ? HC : PN;
+    let ws = XLSX.utils.json_to_sheet(data);
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Produits");
+    XLSX.writeFile(wb, "produits_" + type + ".xlsx");
+}
+
+// =========================
+// Import Excel
+// =========================
+
+function importExcel(event, type) {
+    let file = event.target.files[0];
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+        let data = new Uint8Array(e.target.result);
+        let workbook = XLSX.read(data, { type: "array" });
+        let sheet = workbook.Sheets[workbook.SheetNames[0]];
+        let json = XLSX.utils.sheet_to_json(sheet);
+
+        if (type === "HC") {
+            HC = json;
+            localStorage.setItem("produits_HC", JSON.stringify(HC));
+        } else {
+            PN = json;
+            localStorage.setItem("produits_PN", JSON.stringify(PN));
+        }
+
+        afficher(type);
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+// =========================
+// Résumé (total, moyenne…)
+// =========================
+
+// Formate un prix avec 2 décimales
+function formatPrix(val) {
+    let n = parseFloat(val || 0);
+    return n.toFixed(2) + " €";
+}
+
+function mettreAJourResume(type) {
+    let data = (type === "HC") ? HC : PN;
+    let div = document.getElementById("resume" + type);
+
+    if (!data.length) {
+        div.innerHTML = "Résumé : aucun produit pour le moment.";
+        return;
+    }
+
+    let total = 0;
+    data.forEach(p => {
+        total += parseFloat(p.prix || 0);
+    });
+
+    let nb = data.length;
+    let moyenne = total / nb;
+
+    div.innerHTML = `
+        <strong>Résumé :</strong><br>
+        - Nombre de produits : ${nb}<br>
+        - Total des prix : ${total.toFixed(2)} €<br>
+        - Prix moyen : ${moyenne.toFixed(2)} €
+    `;
+}
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
