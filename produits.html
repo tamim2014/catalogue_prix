@@ -122,6 +122,9 @@
                 <div class="col-12">
                     <button class="btn btn-success">Ajouter</button>
                 </div>
+
+
+
             </form>
 
         </div>
@@ -221,9 +224,13 @@ function afficher(type) {
             <td id="prixCell_${type}_${index}">${formatPrix(p.prix)}</td>
             <td>${p.duree}</td>
             <td>${p.categorie}</td>
-            <td id="action_${type}_${index}">
-                <button class="btn btn-sm btn-warning" onclick="editPrix('${type}',${index})">Modifier</button>
-            </td>
+			 <td id="action_${type}_${index}">
+				<button class="btn btn-sm btn-warning me-1" onclick="editPrix('${type}',${index})">✏️</button>
+				<!-- <button class="btn btn-sm btn-danger" onclick="supprimerLigne('${type}',${index})">🗑️</button> -->
+				<button id="btnDel_${type}_${index}" class="btn btn-sm btn-danger d-none" onclick="supprimerLigne('${type}',${index})">🗑️</button>
+
+			</td>
+
         `;
 
         tbody.appendChild(tr);
@@ -317,6 +324,22 @@ function savePrix(type, index) {
     afficher(type);
 }
 
+
+function supprimerLigne(type, index) {
+    if (!confirm("Supprimer ce produit ?")) return;
+
+    if (type === "HC") {
+        HC.splice(index, 1);
+        localStorage.setItem("produits_HC", JSON.stringify(HC));
+        afficher("HC");
+    } else {
+        PN.splice(index, 1);
+        localStorage.setItem("produits_PN", JSON.stringify(PN));
+        afficher("PN");
+    }
+}
+
+
 // =========================
 // Export Excel
 // =========================
@@ -391,6 +414,22 @@ function mettreAJourResume(type) {
         - Prix moyen : ${moyenne.toFixed(2)} €
     `;
 }
+
+// Listener HC
+document.getElementById("resumeHC").onclick = function() {
+    // On récupère tous les boutons poubelle HC
+    let boutons = document.querySelectorAll('[id^="btnDel_HC_"]');
+    boutons.forEach(btn => btn.classList.remove("d-none"));
+};
+
+// Listener PN
+document.getElementById("resumePN").onclick = function() {
+    let boutons = document.querySelectorAll('[id^="btnDel_PN_"]');
+    boutons.forEach(btn => btn.classList.remove("d-none"));
+};
+
+
+
 </script>
 
 <!-- Bootstrap JS -->
