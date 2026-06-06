@@ -45,62 +45,9 @@
         border-radius: 5px;
         font-size: 15px;
     }
-	/* la derniere colonne: la pousser à droite */
-	/*
-	td:last-child {
-    text-align: right;
-    padding-right: 30px;
-    white-space: nowrap;
-   }
-   */
-
-	
-	
-	/* ####################################  ATO-TRI #################################  */
-	
-	/* 1️⃣ CSS Les bandeaux de catégorie  */
-	
-	.category-header {
-		background: #111;
-		color: #fff;
-		font-weight: bold;
-		text-align: left;
-	}
-
-	.category-header td {
-		padding: 8px 10px;
-		font-size: 1.1em;
-	}
-	
-	
-	.category-header {
-    background: #111;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.category-header td {
-    padding: 8px 10px;
-    font-size: 1.05em;
-}
-
-.category-header .toggle {
-    display: inline-block;
-    width: 18px;
-    text-align: center;
-    margin-right: 6px;
-    transition: transform 0.2s ease;
-}
-
-.category-header.closed .toggle {
-    transform: rotate(-90deg);
-}
-
-
 </style>
 </head>
-<body onload="regrouperParCategorie()">
+<body>
 
 <div class="container">
 
@@ -282,7 +229,6 @@
 <!-- FIN PARTIE 1 -->
 
 <script>
-
 // =========================
 // Données en LocalStorage
 // =========================
@@ -304,20 +250,19 @@ function afficher(type) {
 
     data.forEach((p, index) => {
         let tr = document.createElement("tr");
-        tr.id = `${type}-row-${index}`;
 
         tr.innerHTML = `
             <td>${p.nom}</td>
-            <td>${formatPrix(p.prix)}</td>
+            <td id="prixCell_${type}_${index}">${formatPrix(p.prix)}</td>
             <td>${p.duree}</td>
             <td>${p.categorie}</td>
-            <td id="action_${type}_${index}">
-                <button class="btn btn-sm btn-warning me-1"
-                        onclick="activerEdition(${index}, '${type}')">✏️</button>
-                <button id="btnDel_${type}_${index}"
-                        class="btn btn-sm btn-danger d-none"
-                        onclick="supprimerLigne('${type}',${index})">🗑️</button>
-            </td>
+			 <td id="action_${type}_${index}">
+				<button class="btn btn-sm btn-warning me-1" onclick="editPrix('${type}',${index})">✏️</button>
+				<!-- <button class="btn btn-sm btn-danger" onclick="supprimerLigne('${type}',${index})">🗑️</button> -->
+				<button id="btnDel_${type}_${index}" class="btn btn-sm btn-danger d-none" onclick="supprimerLigne('${type}',${index})">🗑️</button>
+
+			</td>
+
         `;
 
         tbody.appendChild(tr);
@@ -369,69 +314,48 @@ document.getElementById("formPN").onsubmit = e => {
 };
 
 // =========================
-// Édition complète d'une ligne
+// Édition du prix
 // =========================
 
-function activerEdition(index, type) {
-    const data = (type === "HC") ? HC : PN;
-    const p = data[index];
+function editPrix(type, index) {
+    let data = (type === "HC") ? HC : PN;
 
-    const ligne = document.getElementById(`${type}-row-${index}`);
-    if (!ligne) return;
+    // Cellule du prix
+    let cell = document.getElementById(`prixCell_${type}_${index}`);
+    // Cellule des actions
+    let action = document.getElementById(`action_${type}_${index}`);
 
-    ligne.innerHTML = `
-        <td><input type="text" id="edit-nom-${index}" value="${p.nom}" class="form-control form-control-sm" /></td>
+    // Remplace le texte par un input
+    cell.innerHTML = `
+        <input type="number" step="0.01" class="form-control edit-input" 
+               id="edit_${type}_${index}" value="${data[index].prix}">
+    `;
 
-        <td><input type="number" step="0.01"
-                   id="edit-prix-${index}" value="${p.prix}" class="form-control form-control-sm" /></td>
-
-        <td><input type="text" id="edit-duree-${index}" value="${p.duree}" class="form-control form-control-sm" /></td>
-
-        <td>
-            <select id="edit-categorie-${index}" class="form-select form-select-sm">
-                <option value="Alimentation" ${p.categorie === "Alimentation" ? "selected" : ""}>Alimentation</option>
-                <option value="Boisson" ${p.categorie === "Boisson" ? "selected" : ""}>Boisson</option>
-                <option value="Hygiène" ${p.categorie === "Hygiène" ? "selected" : ""}>Hygiène</option>
-            </select>
-        </td>
-
-        <td>
-            <button class="btn btn-sm btn-success me-1"
-                    onclick="enregistrerEdition(${index}, '${type}')">💾</button>
-            <button class="btn btn-sm btn-secondary"
-                    onclick="annulerEdition('${type}')">❌</button>
-        </td>
+    // Remplace le bouton "Modifier" par "Enregistrer" + "Annuler"
+    action.innerHTML = `
+        <button class="btn btn-sm btn-success" onclick="savePrix('${type}',${index})">Enregistrer</button>
+        <button class="btn btn-sm btn-secondary" onclick="afficher('${type}')">Annuler</button>
     `;
 }
 
-function enregistrerEdition(index, type) {
-    const data = (type === "HC") ? HC : PN;
+function savePrix(type, index) {
+    let data = (type === "HC") ? HC : PN;
 
-    data[index] = {
-        nom: document.getElementById(`edit-nom-${index}`).value,
-        prix: parseFloat(document.getElementById(`edit-prix-${index}`).value),
-        duree: document.getElementById(`edit-duree-${index}`).value,
-        categorie: document.getElementById(`edit-categorie-${index}`).value
-    };
+    // Récupère la nouvelle valeur
+    let newPrix = document.getElementById(`edit_${type}_${index}`).value;
+    data[index].prix = newPrix;
 
+    // Sauvegarde dans le LocalStorage
     if (type === "HC") {
-        HC = data;
         localStorage.setItem("produits_HC", JSON.stringify(HC));
     } else {
-        PN = data;
         localStorage.setItem("produits_PN", JSON.stringify(PN));
     }
 
+    // Réaffiche le tableau (et le résumé)
     afficher(type);
 }
 
-function annulerEdition(type) {
-    afficher(type);
-}
-
-// =========================
-// Suppression d'une ligne
-// =========================
 
 function supprimerLigne(type, index) {
     if (!confirm("Supprimer ce produit ?")) return;
@@ -446,6 +370,7 @@ function supprimerLigne(type, index) {
         afficher("PN");
     }
 }
+
 
 // =========================
 // Export Excel
@@ -524,6 +449,7 @@ function mettreAJourResume(type) {
 
 // Listener HC
 document.getElementById("resumeHC").onclick = function() {
+    // On récupère tous les boutons poubelle HC
     let boutons = document.querySelectorAll('[id^="btnDel_HC_"]');
     boutons.forEach(btn => btn.classList.remove("d-none"));
 };
@@ -533,80 +459,6 @@ document.getElementById("resumePN").onclick = function() {
     let boutons = document.querySelectorAll('[id^="btnDel_PN_"]');
     boutons.forEach(btn => btn.classList.remove("d-none"));
 };
-
-// =========================
-// Auto-tri par catégorie
-// =========================
-
-function regrouperParCategorie() {
-    const tbody = document.querySelector("tbody");
-    const rows = Array.from(tbody.querySelectorAll("tr"));
-
-    rows.forEach(r => {
-        if (r.classList.contains("category-header")) r.remove();
-    });
-
-    const produits = rows.filter(r => !r.classList.contains("category-header"));
-
-    produits.sort((a, b) => {
-        const catA = a.children[3].innerText.trim().toLowerCase();
-        const catB = b.children[3].innerText.trim().toLowerCase();
-        return catA.localeCompare(catB);
-    });
-
-    tbody.innerHTML = "";
-
-    let categorieActuelle = "";
-
-    produits.forEach(row => {
-        const categorie = row.children[3].innerText.trim();
-
-        if (categorie !== categorieActuelle) {
-            categorieActuelle = categorie;
-
-            const header = document.createElement("tr");
-            header.classList.add("category-header");
-            header.dataset.open = "false";
-
-            const td = document.createElement("td");
-            td.colSpan = row.children.length;
-            td.innerHTML = `<span class="toggle">▼</span> ${categorie}`;
-
-            header.appendChild(td);
-            tbody.appendChild(header);
-        }
-
-        tbody.appendChild(row);
-    });
-
-    document.querySelectorAll(".category-header").forEach(header => {
-        header.classList.add("closed");
-        header.dataset.open = "false";
-
-        let row = header.nextElementSibling;
-
-        while (row && !row.classList.contains("category-header")) {
-            row.style.display = "none";
-            row = row.nextElementSibling;
-        }
-    });
-
-    document.querySelectorAll(".category-header").forEach(header => {
-        header.addEventListener("click", () => {
-            const isOpen = header.dataset.open === "true";
-            header.dataset.open = isOpen ? "false" : "true";
-            header.classList.toggle("closed", !isOpen);
-
-            let row = header.nextElementSibling;
-
-            while (row && !row.classList.contains("category-header")) {
-                row.style.display = isOpen ? "none" : "";
-                row = row.nextElementSibling;
-            }
-        });
-    });
-}
-
 
 
 
