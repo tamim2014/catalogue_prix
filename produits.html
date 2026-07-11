@@ -171,6 +171,7 @@
 						<option>Cuisine</option>
 						<option>Energie/carburant</option>
 						<option>Frais/Surgelés</option>
+						<option>Fruits et légumes</option>
                         <option>Hygiène</option>
                         <option>Maison</option>
 					    <option>Bébé</option>
@@ -252,6 +253,7 @@
 						<option>Cuisine</option>
 						<option>Energie/carburant</option>
 						<option>Frais/Surgelés</option>
+						<option>Fruits et légumes</option>
                         <option>Hygiène</option>
                         <option>Maison</option>
 					    <option>Bébé</option>
@@ -391,6 +393,8 @@ function activerEdition(index, type) {
             <select id="edit-categorie-${index}" class="form-select form-select-sm">
                 <option value="Alimentation" ${p.categorie === "Alimentation" ? "selected" : ""}>Alimentation</option>
                 <option value="Boisson" ${p.categorie === "Boisson" ? "selected" : ""}>Boisson</option>
+                <option value="Frais/Surgelés" ${p.categorie === "Frais/Surgelés" ? "selected" : ""}>Frais/Surgelés</option>
+                <option value="Fruits et légumes" ${p.categorie === "Fruits et légumes" ? "selected" : ""}>Fruits et légumes</option>
                 <option value="Hygiène" ${p.categorie === "Hygiène" ? "selected" : ""}>Hygiène</option>
             </select>
         </td>
