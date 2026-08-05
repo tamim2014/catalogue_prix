@@ -1,0 +1,87 @@
+    body { padding: 40px; }
+
+    /* Onglets modernes centrés */
+    .nav-tabs {
+        justify-content: center;
+        border-bottom: none;
+        margin-bottom: 20px;
+    }
+    .nav-tabs .nav-link {
+        border-radius: 20px;
+        padding: 10px 25px;
+        margin: 0 10px;
+        background: #e9ecef;
+        border: none;
+        font-weight: 600;
+    }
+    .nav-tabs .nav-link.active {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .edit-input {
+        width: 80px;
+    }
+
+    /* Style du résumé */
+    .resume-box {
+        background: #f8f9fa;
+        border-left: 4px solid #0d6efd;
+        padding: 10px 15px;
+        margin-top: 10px;
+        border-radius: 5px;
+        font-size: 15px;
+    }
+	/* la derniere colonne: la pousser à droite */
+	/*
+	td:last-child {
+    text-align: right;
+    padding-right: 30px;
+    white-space: nowrap;
+   }
+   */
+
+	
+	
+	/* ####################################  ATO-TRI #################################  */
+	
+	/* 1️⃣ CSS Les bandeaux de catégorie  */
+	
+	.category-header {
+		background: #111;
+		color: #fff;
+		font-weight: bold;
+		text-align: left;
+	}
+
+	.category-header td {
+		padding: 8px 10px;
+		font-size: 1.1em;
+	}
+	
+	
+	.category-header {
+    background: #111;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.category-header td {
+    padding: 8px 10px;
+    font-size: 1.05em;
+}
+
+.category-header .toggle {
+    display: inline-block;
+    width: 18px;
+    text-align: center;
+    margin-right: 6px;
+    transition: transform 0.2s ease;
+}
+
+.category-header.closed .toggle {
+    transform: rotate(-90deg);
+}
+
+
